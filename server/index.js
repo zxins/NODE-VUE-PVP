@@ -5,6 +5,8 @@ app.use(express.json())
 // 跨域模块
 app.use(require('cors')())
 
+app.use('/uploads', express.static(__dirname + '/uploads'))
+
 require('./plugins/db')(app)
 require('./routes/admin')(app)
 
