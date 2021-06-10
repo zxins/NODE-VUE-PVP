@@ -32,25 +32,25 @@
         let res
         let message
         if (this.id) {
-          await this.$http.put(`rest/categories/${this.id}`, this.model)
+          await this.$http.put(`rest/admin_users/${this.id}`, this.model)
           message = "更新成功"
         } else {
-          await this.$http.post('rest/categories', this.model)
+          await this.$http.post('rest/admin_users', this.model)
           message = "保存成功"
         }
         console.log(res)
-        this.$router.push('/categories/list')
+        this.$router.push('/admin_users/list')
         this.$message({
           type: 'success',
           message: message
         })
       },
       async fetch() {
-        const res = await this.$http.get(`/rest/categories/${this.id}`)
+        const res = await this.$http.get(`/rest/admin_users/${this.id}`)
         this.model = res.data
       },
       async fetchParents() {
-        const res = await this.$http.get(`/rest/categories`)
+        const res = await this.$http.get(`/rest/admin_users`)
         this.parents = res.data
       }
     },
