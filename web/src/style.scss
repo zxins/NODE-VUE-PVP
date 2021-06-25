@@ -37,7 +37,7 @@ $colors: (
   }
 
   .bg-#{$colorKey} {
-    color: $color;
+    background-color: $color;
   }
 }
 
