@@ -1,5 +1,7 @@
 const express = require("express")
-app = express()
+const app = express()
+
+app.set('secret', 'i2o3foasdjfsdf')
 
 app.use(express.json())
 // 跨域模块
