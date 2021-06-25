@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <h1>{{id ? '编辑' : '新建'}}英雄</h1>
+    <h1>{{ id ? '编辑' : '新建' }}英雄</h1>
     <el-form label-width="120px" @submit.native.prevent="save">
       <el-tabs value="skills" type="border-card">
         <el-tab-pane label="基本信息">
@@ -13,8 +13,12 @@
           </el-form-item>
 
           <el-form-item label="头像">
-            <el-upload class="avatar-uploader" :action="$http.defaults.baseURL + '/upload'" :show-file-list="false"
-              :on-success="afterUpload">
+            <el-upload
+                class="avatar-uploader"
+                :action="uploadUrl"
+                :headers="getAuthHeaders()"
+                :show-file-list="false"
+                :on-success="afterUpload">
               <img v-if="model.avatar" :src="model.avatar" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -61,15 +65,19 @@
           </el-form-item>
         </el-tab-pane>
         <el-tab-pane label="技能" name="skills">
-          <el-button size="small" @click="model.skills.push({})"> <i class="el-icon-plus"></i> 添加技能</el-button>
+          <el-button size="small" @click="model.skills.push({})"><i class="el-icon-plus"></i> 添加技能</el-button>
           <el-row type="flex" style="flex-wrap: wrap;">
             <el-col :md="12" v-for="(item, index) in model.skills" :key="index">
               <el-form-item label="名称">
                 <el-input v-model="item.name"></el-input>
               </el-form-item>
               <el-form-item label="图标">
-                <el-upload class="avatar-uploader" :action="$http.defaults.baseURL + '/upload'" :show-file-list="false"
-                  :on-success="res => $set(item, 'icon', res.url)">
+                <el-upload
+                    class="avatar-uploader"
+                    :action="uploadUrl"
+                    :headers="getAuthHeaders()"
+                    :show-file-list="false"
+                    :on-success="res => $set(item, 'icon', res.url)">
                   <img v-if="item.icon" :src="item.icon" class="avatar">
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
@@ -99,64 +107,64 @@
 
 
 <script>
-  export default {
-    props: {
-      id: {}
-    },
-    data() {
-      return {
-        model: {
-          avatar: '',
-          name: '',
-          skills: [],
-          scores: {
-            // difficult: 0,
-            // skill: 0,
-            // attack: 0,
-            // survive: 0
-          }
-        },
-        categories: [],
-        items: []
-      }
-    },
-    methods: {
-      afterUpload(res) {
-        // this.$set(this.model, 'avatar', res.url)
-        this.model.avatar = res.url
-      },
-      async save() {
-        let message
-        if (this.id) {
-          await this.$http.put(`rest/heroes/${this.id}`, this.model)
-          message = "更新成功"
-        } else {
-          await this.$http.post('rest/heroes', this.model)
-          message = "保存成功"
+export default {
+  props: {
+    id: {}
+  },
+  data() {
+    return {
+      model: {
+        avatar: '',
+        name: '',
+        skills: [],
+        scores: {
+          // difficult: 0,
+          // skill: 0,
+          // attack: 0,
+          // survive: 0
         }
-        this.$router.push('/heroes/list')
-        this.$message({
-          type: 'success',
-          message: message
-        })
       },
-      async fetch() {
-        const res = await this.$http.get(`/rest/heroes/${this.id}`)
-        this.model = Object.assign({}, this.model, res.data)
-      },
-      async fetchCategories() {
-        const res = await this.$http.get('/rest/categories')
-        this.categories = res.data
-      },
-      async fetchItems() {
-        const res = await this.$http.get('/rest/items')
-        this.items = res.data
-      }
-    },
-    created() {
-      this.fetchCategories()
-      this.fetchItems()
-      this.id && this.fetch()
+      categories: [],
+      items: []
     }
+  },
+  methods: {
+    afterUpload(res) {
+      // this.$set(this.model, 'avatar', res.url)
+      this.model.avatar = res.url
+    },
+    async save() {
+      let message
+      if (this.id) {
+        await this.$http.put(`rest/heroes/${this.id}`, this.model)
+        message = "更新成功"
+      } else {
+        await this.$http.post('rest/heroes', this.model)
+        message = "保存成功"
+      }
+      this.$router.push('/heroes/list')
+      this.$message({
+        type: 'success',
+        message: message
+      })
+    },
+    async fetch() {
+      const res = await this.$http.get(`/rest/heroes/${this.id}`)
+      this.model = Object.assign({}, this.model, res.data)
+    },
+    async fetchCategories() {
+      const res = await this.$http.get('/rest/categories')
+      this.categories = res.data
+    },
+    async fetchItems() {
+      const res = await this.$http.get('/rest/items')
+      this.items = res.data
+    }
+  },
+  created() {
+    this.fetchCategories()
+    this.fetchItems()
+    this.id && this.fetch()
   }
+}
 </script>
